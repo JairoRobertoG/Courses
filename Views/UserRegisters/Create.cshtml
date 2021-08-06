@@ -1,0 +1,71 @@
+﻿@model Courses.Models.Entities.UserRegister
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>UserRegister</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName" class="control-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+                <span asp-validation-for="MiddleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProfileImage" class="control-label"></label>
+                <input asp-for="ImageFile" type="file" accept="image/*" required>
+                @*<input type="file" name="files" multiple required />*@
+            </div>
+            
+            <input type="hidden" class="form-check-input" asp-for="Active" value="true" />
+
+            <div class="form-group">
+                <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+                <label asp-for="CourseType.Id">Tipo de Curso</label>
+                <select asp-for="CourseType.Id"
+                        class="form-control"
+                        asp-items="@(new SelectList(ViewBag.CourseTypeList,"Value", "Text"))">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+                <label asp-for="StudyLevel.Id">Nivel de Studios</label>
+                <select asp-for="StudyLevel.Id"
+                        class="form-control"
+                        asp-items="@(new SelectList(ViewBag.StudyTypeList,"Value", "Text"))">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -40,7 +40,7 @@ namespace Courses.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Create", "UserRegisters");
                 }
 
                 ModelState.AddModelError(string.Empty, "Autentificación Invalida.");

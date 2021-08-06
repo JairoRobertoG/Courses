@@ -21,8 +21,15 @@ namespace Courses.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserRegister>()
+            .HasOne(p => p.CourseType)
+            .WithMany(b => b.UserRegisters);
 
+            modelBuilder.Entity<UserRegister>()
+            .HasOne(p => p.StudyLevel)
+            .WithMany(b => b.UserRegisters);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
