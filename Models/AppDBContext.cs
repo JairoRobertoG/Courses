@@ -22,12 +22,17 @@ namespace Courses.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserRegister>()
-            .HasOne(p => p.CourseType)
-            .WithMany(b => b.UserRegisters);
+                        .HasOne(p => p.CourseType)
+                        .WithMany(b => b.UserRegisters);
 
             modelBuilder.Entity<UserRegister>()
-            .HasOne(p => p.StudyLevel)
-            .WithMany(b => b.UserRegisters);
+                        .HasOne(p => p.StudyLevel)
+                        .WithMany(b => b.UserRegisters);
+
+            modelBuilder.Entity<UserRegister>()
+                        .HasOne<ApplicationUser>(ad => ad.ApplicationUser)
+                        .WithOne(s => s.UserRegister)
+                        .HasForeignKey<UserRegister>(ad => ad.UserRegisterOfApplicationUser );
 
             base.OnModelCreating(modelBuilder);
         }

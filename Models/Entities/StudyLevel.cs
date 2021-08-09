@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Courses.Models.Entities
@@ -11,6 +12,6 @@ namespace Courses.Models.Entities
         [Required]
         public string Name { get; set; }
 
-        public ICollection<UserRegister> UserRegisters { get; set; }
+        public virtual ICollection<UserRegister> UserRegisters { get; set; }
     }
 }

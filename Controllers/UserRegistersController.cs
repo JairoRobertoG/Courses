@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Courses.Models;
 using Courses.Models.Entities;
-using Microsoft.AspNetCore.Http;
-using System.IO;
+using System;
 
 namespace Courses.Controllers
 {
@@ -48,34 +46,7 @@ namespace Courses.Controllers
         // GET: UserRegisters/Create
         public IActionResult Create()
         {
-            List<SelectListItem> studyTypeList = (from product in _context.StudyLevels
-                                                 select new SelectListItem()
-                                                 {
-                                                     Text = product.Name,
-                                                     Value = product.Id.ToString(),
-                                                 }).ToList();
-
-            List<SelectListItem> courseTypeList = (from product in _context.CourseTypes
-                                                  select new SelectListItem()
-                                                  {
-                                                      Text = product.Name,
-                                                      Value = product.Id.ToString(),
-                                                  }).ToList();
-
-            studyTypeList.Insert(0, new SelectListItem()
-            {
-                Text = "----Seleccione una opción----",
-                Value = string.Empty
-            });
-
-            courseTypeList.Insert(0, new SelectListItem()
-            {
-                Text = "----Seleccione una opción----",
-                Value = string.Empty
-            });
-
-            ViewBag.StudyTypeList = studyTypeList;
-            ViewBag.CourseTypeList = courseTypeList;
+            FillComboBox();
 
             return View();
         }
@@ -87,23 +58,57 @@ namespace Courses.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,BirthDate,ProfileImage,Active,StudyLevel,CourseType,ImageFile")] UserRegister userRegister)
         {
-            userRegister.StudyLevel = _context.StudyLevels.Find(userRegister.StudyLevel.Id);
-            userRegister.CourseType = _context.CourseTypes.Find(userRegister.CourseType.Id);
-            ModelState.Remove("StudyLevel.Name");
-            ModelState.Remove("CourseType.Name");
-            using (var memoryStream = new MemoryStream())
+            if (userRegister.BirthDate == new DateTime())
             {
-                await userRegister.ImageFile.CopyToAsync(memoryStream);
-                userRegister.ProfileImage = memoryStream.ToArray();
-            };
+                ModelState.Remove("BirthDate");
+                ModelState.AddModelError("BirthDate", "El Campo Fecha de Nacimiento es necesario llenarlo.");
+            }
+
+            ModelState.Remove("CourseType");
+            ModelState.Remove("CourseType.Name");
+            ModelState.Remove("CourseType.Id");
+            if (userRegister.CourseType.Id > 0)
+            {
+                userRegister.CourseType = _context.CourseTypes.Find(userRegister.CourseType.Id);
+            }
+            else
+            {
+                ModelState.AddModelError("CourseType", "El Campo Tipo de Curso es necesario llenarlo.");
+            }
+
+            ModelState.Remove("StudyLevel");
+            ModelState.Remove("StudyLevel.Name");
+            ModelState.Remove("StudyLevel.Id");
+            if (userRegister.StudyLevel.Id > 0)
+            {
+                userRegister.StudyLevel = _context.StudyLevels.Find(userRegister.StudyLevel.Id);
+            }
+            else
+            {
+                ModelState.AddModelError("StudyLevel", "El Campo Nivel de Estudios es necesario llenarlo.");
+            }
+
+            if (userRegister.ImageFile != null)
+            {
+                if (Utilities.Utilities.IsImageProfileValidSize(userRegister.ImageFile.Length))
+                {
+                    userRegister.ProfileImage = Utilities.Utilities.FiletoBytes(userRegister.ImageFile);
+                }
+                else
+                {
+                    ModelState.AddModelError("ProfileImage", "El tamaño de la imagen supera 1 MB de tamaño.");
+                }
+            }
 
             if (ModelState.IsValid)
             {
                 _context.Add(userRegister);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
+            FillComboBox();
             return View(userRegister);
         }
 
@@ -190,6 +195,46 @@ namespace Courses.Controllers
         private bool UserRegisterExists(int id)
         {
             return _context.UserRegisters.Any(e => e.Id == id);
+        }
+
+        private void FillComboBox()
+        {
+            List<SelectListItem> studyTypeList = (from product in _context.StudyLevels
+                                                  select new SelectListItem()
+                                                  {
+                                                      Text = product.Name,
+                                                      Value = product.Id.ToString(),
+                                                  }).ToList();
+
+            List<SelectListItem> courseTypeList = (from product in _context.CourseTypes
+                                                   select new SelectListItem()
+                                                   {
+                                                       Text = product.Name,
+                                                       Value = product.Id.ToString(),
+                                                   }).ToList();
+
+            studyTypeList.Insert(0, new SelectListItem()
+            {
+                Text = "----Seleccione una opción----",
+                Value = string.Empty
+            });
+
+            courseTypeList.Insert(0, new SelectListItem()
+            {
+                Text = "----Seleccione una opción----",
+                Value = string.Empty
+            });
+
+            ViewBag.StudyTypeList = studyTypeList;
+            ViewBag.CourseTypeList = courseTypeList;
+        }
+
+        [HttpGet]
+        public ActionResult GetImage(int id)
+        {
+            byte[] image = _context.UserRegisters.Find(id).ProfileImage;
+            
+            return File(image, "image/jpg");
         }
     }
 }

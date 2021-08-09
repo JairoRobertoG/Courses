@@ -1,13 +1,16 @@
 ﻿@model Courses.Models.Entities.UserRegister
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registro de Nuevo Usuario";
 }
 
-<h1>Create</h1>
+<h1>Crea tu Perfil</h1>
 
-<h4>UserRegister</h4>
+<h4>Registro de Nuevo Usuario</h4>
 <hr />
+<div class="text-danger">
+    @Html.ValidationSummary(false)
+</div>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
@@ -29,33 +32,37 @@
             </div>
             <div class="form-group">
                 <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" />
+                <input asp-for="BirthDate" class="form-control" placeholder="MM/dd/aaaa"/>
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ProfileImage" class="control-label"></label>
-                <input asp-for="ImageFile" type="file" accept="image/*" required>
-                @*<input type="file" name="files" multiple required />*@
+                <input asp-for="ImageFile" type="file" accept="image/*" >
+                <br />
+                <span style="color: red">El tamaño maximo es de 1 MB.</span>
             </div>
             
             <input type="hidden" class="form-check-input" asp-for="Active" value="true" />
 
             <div class="form-group">
                 <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
-                <label asp-for="CourseType.Id">Tipo de Curso</label>
+                <label asp-for="CourseType">Tipo de Curso</label>
                 <select asp-for="CourseType.Id"
                         class="form-control"
                         asp-items="@(new SelectList(ViewBag.CourseTypeList,"Value", "Text"))">
                 </select>
+                <span asp-validation-for="CourseType" class="text-danger"></span>
             </div>
+
 
             <div class="form-group">
                 <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
-                <label asp-for="StudyLevel.Id">Nivel de Studios</label>
+                <label asp-for="StudyLevel">Nivel de Studios</label>
                 <select asp-for="StudyLevel.Id"
                         class="form-control"
                         asp-items="@(new SelectList(ViewBag.StudyTypeList,"Value", "Text"))">
                 </select>
+                <span asp-validation-for="StudyLevel" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -68,4 +75,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-

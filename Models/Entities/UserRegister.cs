@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,29 +11,42 @@ namespace Courses.Models.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El Campo Primer Nombre es necesario llenarlo")]
+        [DisplayName("Primer Nombre")]
         public string FirstName { get; set; }
 
+        [DisplayName("Segundo Nombre")]
         public string MiddleName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El Campo Apellidos es necesario llenarlo")]
+        [DisplayName("Apellidos")]
         public string LastName { get; set; }
 
         [Required]
+        [DisplayName("Fecha de Nacimiento")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate { get; set; }
 
+        [DisplayName("Imagen de Perfil")]
         public byte[] ProfileImage { get; set; }
 
         [Required]
         public bool Active { get; set; }
 
         [Required]
-        public StudyLevel StudyLevel { get; set; }
+        [DisplayName("Nivel de Estudios")]
+        public virtual StudyLevel StudyLevel { get; set; }
 
         [Required]
-        public CourseType CourseType { get; set; }
+        public virtual CourseType CourseType { get; set; }
 
         [NotMapped]
+        [DisplayName("Imagen de Perfil")]
         public IFormFile ImageFile { get; set; }
+
+        public string UserRegisterOfApplicationUser { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }
